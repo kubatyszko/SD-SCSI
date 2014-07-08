@@ -1,0 +1,3 @@
+This is SD-SCSI, a simple adapter to use SD cards in SCSI hosts.
+
+Coming soon...
