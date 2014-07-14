@@ -1,7 +1,9 @@
 This is SD-SCSI, a simple adapter to use microSD cards in SCSI hosts.
 
-(NOTE: firmware files still missing, i want to carefully test everything before
-       committing)
+(NOTE: firmware files still incomplete, the DFU boot loader currently builds a
+too large binary and thus doesn't work. You can flash everything and the
+adapter will work, but you can't update via USB later and updating via JTAG is
+difficult when the 74F06s are in place.
 
 The materials here are provided "as-is", without warranty of any kind. You may
 make your own adapters for non-commercial use, commercial use is strictly
@@ -53,27 +55,36 @@ development adapter), it's easier to first install the firmware and then solder
 the 74F06s in place (like i did with the 8 other boards).
 
 After putting together the PCB, you have one 1-pin header on the PCB, which is
-NRST, the other JTAG signals are available on the SCSI connector - check the
-schematics.
+NRST, the other JTAG signals are available on the SCSI connector. Make sure the
+termination resistors and the 74F06s are not installed and wire your JTAG
+adapter to the SD-SCSI board the following way (numbers in brackets are 20 pin
+JTAG connector pins):
+
+- TMS (7) to SCSI pin 42
+- TCK (9) to SCSI pin 38
+- TDI (5) to SCSI pin 36
+- TDO (13) to SCSI pin 18
+- NTRST (3) to SCSI pin 14
+- NRST (15) to NRST pin on PCB
+- GND (4) to SCSI pin 20
+
+You can power the SD-SCSI board using USB.
 
 Flash the firmware, run a first check
 ----------------------------------------
 
 The firmware consists of several parts that need to be flashed into the correct
-locations. With openocd, you can use those commands:
-
-  flash write_image erase kernel.bin 0x08000000
-  flash write_image erase dfuboot.bin 0x0801cd00
-  flash write_image dfustart.bin 0x0801ff00
-  flash write_image current.hib 0x0801fff0
+locations. Have a look at the provided openocd.cfg to find out what goes where.
+You can also use this config file to flash your SD-SCSI adapter with a simple
+"populate" after "reset halt".
 
 - kernel.bin is the main firmware for the SD-SCSI adapter
 - dfuboot.bin is a DFU boot loader, so you can update the firmware using USB
   later
-- dfustart.bin is a starter for the DFU boot loader, which always sits at FLASH
-  end - 256 bytes
-- current.hib is a "hardware information block", which always sits at FLASH end
-  - 16 bytes
+- dfustart.bin is a starter for the DFU boot loader, which always sits 256
+  bytes before FLASH end
+- current.hib is a "hardware information block", which always sits 16 bytes
+  before FLASH end
 
 The whole firmware is based on MiKOS, a realtime operating system project i'm
 working on since several years and it currently is not planned to open source
