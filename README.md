@@ -1,10 +1,5 @@
 This is SD-SCSI, a simple adapter to use microSD cards in SCSI hosts.
 
-(NOTE: firmware files still incomplete, the DFU boot loader currently builds a
-too large binary and thus doesn't work. You can flash everything and the
-adapter will work, but you can't update via USB later and updating via JTAG is
-difficult when the 74F06s are in place.
-
 The materials here are provided "as-is", without warranty of any kind. You may
 make your own adapters for non-commercial use, commercial use is strictly
 prohibited.
@@ -17,7 +12,7 @@ Building the SD-SCSI adapter consists of several steps:
 - Put together most of the PCB, leaving out the SCSI drivers (74F06)
 - Flash the firmware and check if it basically works
 - Solder the 74F06 in place
-- Configuring the adapter for your needs
+- Configure the adapter for your needs
 
 Make the PCB
 ----------------------------------------
@@ -101,7 +96,7 @@ this might break the firmware (it's board type, revision, xtal freq, cpu freq).
 After flashing everything, you can run the following basic test:
 - Connect the adapter without any card installed to USB - the red LED should
   light up and you should see an USB device in DFU mode. This is how you update
-  the firmware.
+  the firmware (tool follows, libusb based, you get the source).
 - Connect the adapter with a card installed to USB - the adapter should work as
   a simple card reader now, giving you access to the whole card, enabling you
   to partition the card and install the configuration file.
